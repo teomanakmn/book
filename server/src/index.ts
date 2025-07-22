@@ -21,6 +21,15 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 10000;
 
+// Veritabanı bağlantısını test et
+prisma.$connect()
+  .then(() => {
+    console.log('✅ Veritabanı bağlantısı başarılı');
+  })
+  .catch((error) => {
+    console.error('❌ Veritabanı bağlantı hatası:', error);
+  });
+
 // Middleware
 // CORS ayarları - Render.com frontend domain'ini ekleyin
 const allowedOrigins = process.env.NODE_ENV === 'production'
