@@ -7,11 +7,17 @@ interface Book {
   id: string;
   title: string;
   author: string;
+  isbn?: string;
+  description?: string;
   coverImage?: string;
   status: 'TO_READ' | 'READING' | 'COMPLETED' | 'ABANDONED';
   currentPage: number;
   totalPages?: number;
+  rating?: number;
+  createdAt: string;
+  updatedAt: string;
   category?: {
+    id: string;
     name: string;
     color: string;
   };
