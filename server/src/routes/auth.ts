@@ -13,6 +13,8 @@ router.post('/register', [
   body('password').isLength({ min: 6 }).withMessage('Şifre en az 6 karakter olmalı'),
   body('name').notEmpty().withMessage('İsim gerekli')
 ], async (req, res) => {
+  // Debug için request body'yi logla
+  console.log('Register request body:', req.body);
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -60,7 +62,13 @@ router.post('/register', [
     });
   } catch (error) {
     console.error('Kayıt hatası:', error);
-    res.status(500).json({ error: 'Sunucu hatası' });
+    // Daha detaylı hata mesajı
+    const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata';
+    res.status(500).json({ 
+      error: 'Sunucu hatası', 
+      details: errorMessage,
+      stack: process.env.NODE_ENV !== 'production' ? (error instanceof Error ? error.stack : '') : undefined
+    });
   }
 });
 
@@ -69,6 +77,8 @@ router.post('/login', [
   body('email').isEmail().withMessage('Geçerli bir email adresi girin'),
   body('password').notEmpty().withMessage('Şifre gerekli')
 ], async (req, res) => {
+  // Debug için request body'yi logla
+  console.log('Login request body:', req.body);
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -110,7 +120,13 @@ router.post('/login', [
     });
   } catch (error) {
     console.error('Giriş hatası:', error);
-    res.status(500).json({ error: 'Sunucu hatası' });
+    // Daha detaylı hata mesajı
+    const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata';
+    res.status(500).json({ 
+      error: 'Sunucu hatası', 
+      details: errorMessage,
+      stack: process.env.NODE_ENV !== 'production' ? (error instanceof Error ? error.stack : '') : undefined
+    });
   }
 });
 

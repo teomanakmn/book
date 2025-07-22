@@ -13,6 +13,7 @@ import statsRoutes from './routes/stats';
 import searchRoutes from './routes/search';
 import tagRoutes from './routes/tags';
 import bookTagRoutes from './routes/bookTags';
+import healthRoutes from './routes/health';
 
 dotenv.config();
 
@@ -55,6 +56,7 @@ app.use(express.json());
 app.use(morgan('combined'));
 
 // Routes
+app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/categories', categoryRoutes);
