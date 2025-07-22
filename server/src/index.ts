@@ -23,22 +23,34 @@ const PORT = process.env.PORT || 10000;
 // Middleware
 // CORS ayarları - Render.com frontend domain'ini ekleyin
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://kitapkayit.onrender.com'] // Render.com frontend domain'inizi buraya ekleyin
+  ? ['https://kitap-app-frontend.onrender.com', 'https://kitapkayit.onrender.com'] // Render.com frontend domain'leri
   : ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // origin olmayan isteklere izin ver (örn. Postman)
-    if (!origin) return callback(null, true);
+// Geliştirme aşamasında daha esnek CORS ayarları
+if (process.env.NODE_ENV === 'production') {
+  app.use(cors({
+    origin: function (origin, callback) {
+      // origin olmayan isteklere izin ver (örn. Postman)
+      if (!origin) return callback(null, true);
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS policy violation'));
-    }
-  },
-  credentials: true
-}));
+      if (allowedOrigins.indexOf(origin) !== -1 || origin?.includes('render.com')) {
+        callback(null, true);
+      } else {
+        console.log('CORS blocked:', origin);
+        callback(new Error('CORS policy violation'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+} else {
+  // Geliştirme ortamında tüm origin'lere izin ver
+  app.use(cors({
+    origin: true,
+    credentials: true
+  }));
+}
 app.use(express.json());
 app.use(morgan('combined'));
 
