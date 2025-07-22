@@ -19,4 +19,9 @@ declare global {
       NODE_ENV?: string;
     }
   }
+  
+  var process: {
+    env: NodeJS.ProcessEnv;
+    exit: (code?: number) => never;
+  };
 }

@@ -4,6 +4,7 @@
     "lib": ["ES2020", "DOM", "ES2021.String"],
     "module": "CommonJS",
     "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": false,
