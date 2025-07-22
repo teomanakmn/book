@@ -1,0 +1,17 @@
+{
+  "name": "kitapkayit-app",
+  "version": "1.0.0",
+  "description": "Kitap Kayıt Uygulaması",
+  "scripts": {
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "build:all": "npm run build:server && npm run build:client",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\""
+  },
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}

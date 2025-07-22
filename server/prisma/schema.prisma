@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  books     Book[]
+  quotes    Quote[]
+  categories Category[]
+
+  @@map("users")
+}
+
+model Book {
+  id          String     @id @default(cuid())
+  title       String
+  author      String
+  isbn        String?
+  description String?
+  coverImage  String?
+  totalPages  Int?
+  currentPage Int        @default(0)
+  status      BookStatus @default(TO_READ)
+  rating      Int?       @map("rating")
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  userId     String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  quotes Quote[]
+  tags   BookTag[]
+
+  @@map("books")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  books Book[]
+
+  @@unique([userId, name])
+  @@map("categories")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  books BookTag[]
+
+  @@map("tags")
+}
+
+model BookTag {
+  id     String @id @default(cuid())
+  bookId String
+  tagId  String
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, tagId])
+  @@map("book_tags")
+}
+
+model Quote {
+  id        String   @id @default(cuid())
+  text      String
+  page      Int?
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@map("quotes")
+}
+
+enum BookStatus {
+  TO_READ
+  READING
+  COMPLETED
+  ABANDONED
+}
