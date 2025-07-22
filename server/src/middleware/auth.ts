@@ -4,8 +4,10 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// AuthRequest artık Express.Request'i genişletiyor ve tüm özelliklerini içeriyor
 export interface AuthRequest extends Request {
   userId?: string;
+  // Express.Request zaten body, params, query gibi özellikleri içeriyor
 }
 
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {

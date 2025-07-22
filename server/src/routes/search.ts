@@ -1,6 +1,7 @@
 import express from 'express';
 import fetch from 'node-fetch';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import { GoogleBooksResponse, BookRecommendation } from '../types/googleBooks';
 
 const router = express.Router();
 
@@ -16,13 +17,13 @@ router.get('/books', authenticateToken, async (req: AuthRequest, res) => {
     const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q as string)}&maxResults=${maxResults}&langRestrict=tr`;
     
     const response = await fetch(apiUrl);
-    const data = await response.json();
+    const data = await response.json() as GoogleBooksResponse;
 
     if (!data.items) {
       return res.json({ books: [] });
     }
 
-    const books = data.items.map((item: any) => {
+    const books = data.items.map((item) => {
       const volumeInfo = item.volumeInfo;
       return {
         googleId: item.id,
@@ -59,7 +60,7 @@ router.get('/isbn/:isbn', authenticateToken, async (req: AuthRequest, res) => {
     const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`;
     
     const response = await fetch(apiUrl);
-    const data = await response.json();
+    const data = await response.json() as GoogleBooksResponse;
 
     if (!data.items || data.items.length === 0) {
       return res.status(404).json({ error: 'Kitap bulunamadı' });
@@ -140,17 +141,17 @@ router.get('/recommendations', authenticateToken, async (req: AuthRequest, res) 
       .map(([category]) => category);
 
     // Google Books API'den öneriler al
-    const recommendations = [];
+    const recommendations: BookRecommendation[] = [];
     
     // Yazarlara göre öneriler
     for (const author of topAuthors.slice(0, 2)) {
       try {
         const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=inauthor:"${encodeURIComponent(author)}"&maxResults=5&langRestrict=tr`;
         const response = await fetch(apiUrl);
-        const data = await response.json();
+        const data = await response.json() as GoogleBooksResponse;
         
         if (data.items) {
-          const authorBooks = data.items.map((item: any) => {
+          const authorBooks: BookRecommendation[] = data.items.map((item) => {
             const volumeInfo = item.volumeInfo;
             return {
               googleId: item.id,
@@ -177,10 +178,10 @@ router.get('/recommendations', authenticateToken, async (req: AuthRequest, res) 
       try {
         const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=subject:"${encodeURIComponent(category)}"&maxResults=5&langRestrict=tr`;
         const response = await fetch(apiUrl);
-        const data = await response.json();
+        const data = await response.json() as GoogleBooksResponse;
         
         if (data.items) {
-          const categoryBooks = data.items.map((item: any) => {
+          const categoryBooks: BookRecommendation[] = data.items.map((item) => {
             const volumeInfo = item.volumeInfo;
             return {
               googleId: item.id,
