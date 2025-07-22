@@ -10,6 +10,7 @@ declare global {
       NODE_ENV?: string;
     };
     exit: (code?: number) => never;
+    on: (event: string, listener: (...args: any[]) => void) => any;
   };
   
   var require: (id: string) => any;
