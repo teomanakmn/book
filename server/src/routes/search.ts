@@ -2,6 +2,7 @@ import express from 'express';
 import fetch from 'node-fetch';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { GoogleBooksResponse, BookRecommendation } from '../types/googleBooks';
+import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
 
@@ -98,7 +99,6 @@ router.get('/isbn/:isbn', authenticateToken, async (req: AuthRequest, res) => {
 // Kitap önerileri (kullanıcının okuma geçmişine göre)
 router.get('/recommendations', authenticateToken, async (req: AuthRequest, res) => {
   try {
-    const { PrismaClient } = require('@prisma/client');
     const prisma = new PrismaClient();
 
     // Kullanıcının en çok okuduğu kategorileri ve yazarları bul
